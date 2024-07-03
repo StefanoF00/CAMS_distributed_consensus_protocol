@@ -1,0 +1,133 @@
+### Slide 1: Title Slide
+
+Good [morning/afternoon/evening], everyone. 
+Today, I will be presenting the research paper titled 'A New Distributed Protocol for Consensus of Discrete-Time Systems.' 
+This work is authored by Filippo Cacace, Mattia Mattioni, Salvatore Monaco, and Dorothée Normand-Cyrot, and published in the European Journal of Control in 2023.
+
+
+
+### Slide 2: Introduction
+As the paper title suggests, the main topic is consensus protocol
+Consensus protocol is a foundational technique that drives the dynamics of multiple agents of a system in a reliable, efficient and secure way to a common behavior.
+
+Centralized protocol: a central entity collects all the information and calculates the control action for all agents​​.
+PRO: centralized protocol can offer faster and more deterministic convergence in smaller networks.
+CON: limited Scalability. Central collection can become inefficient for large networks​​
+
+Decentralized protocol: control action calculated locally by each agent using only the locally available information. 
+This is done through multiple consensus iterations. Need to define a topology.
+PRO: more suitable for large networks due to its scalable nature and local calculations
+CON: potentially slower and more iterative convergence.
+
+Consensus protocols are crucial in various applications, including opinion dynamics, network routing, and federated learning problems.
+
+
+
+### Slide 3.1: Problem Statement - Formulation
+
+Sys modeled as a graph undirected, with set of vertexes and set of edges.
+Dynamics discrete time -> INTEGRATOR: Nell'equazione continua x_dot = u, x_dot rappresenta la derivata di x rispetto al tempo, 
+che può essere approssimata come la differenza tra i valori di x in due istanti di tempo successivi nel dominio discreto. Così, possiamo scrivere:
+x_dot = x(t+1)-x(t) => ecco che abbiamo x(t+1)-x(t)=u(t) -> x(t+1)=x(t)+u(t)
+Std protocol, where N_i is set of neighbors -> nw dynamics is... with dynamic matrix (A) : eigenvalues mu_i = 1 -K*l_i
+Where K is a coupling gain that determines the mutual influence between nodes.
+
+
+
+### Slide 3.2: Problem Statement - Motivation
+
+Centralized protocols:
+require restrictive conditions on K
+Convergence ensured only if K<=1/l_max
+K small => k*l_i small => eigenvalues mu_i stay close to 1 (unitary circle boundary) =>slow convergence rates 
+Consequently, this leads to slower convergence rates and higher communication overhead. 
+
+Decentralized protocols:
+* Practical limitation due to the need for each node to have the precise knowledge of the network topology 
+* Absence of a central entity:
+	Each node now has only local information from its neighbors (& possibly some additional information from previous time steps)
+	So all necessary information is not available in a single step
+	Nodes require more steps to communicate with others and exchange information
+	=> This communication is subject to delays due to the finite speed of information transfer.
+
+Common problem: Convergence rate cannot be fixed arbitrarily 
+
+The following research aims to overcome these limitations.
+
+
+
+### Slide 4.1: Proposed centralized protocol - CONTROL
+
+Extension of the Mattioni et al. work
+Local controls
+Centralized control vector: Weighted Laplatian W, associated to a new dummy network. W depends on L, that can be computed locally only if agents know the topology.
+New eigenvalues now depend also on the parameter g. 
+One of them has value 1 (corresponding to lambda=0), all the other ones are stable if k>0 and g>=0.5
+
+
+### Slide 4.2: Proposed centralized protocol - RECALLS
+
+Recall Passivity: defined storage function S(x) = 0.5x(t)^2
+	lets compute increment delta_S=S(x(t+1))-S(x(t))
+	substitute x(t+1) = x(t) + u(t) in the increment
+	in the increment, express x in terms of the output and input: y = x+gu -> x=y-gu
+g=1/2: Loseless: the energy provided by the input exactly matches the change in stored energy, with no additional energy dissipation. The system does not generate or dissipate extra energy.
+g>1/2: input-strictly passive: agents dissipate a certain amount of energy, contributing to enhanced stability and robustness.
+
+
+
+### Slide 5.1: Distributed implementation - CONTROL
+
+Local control laws are obtained by explicating u_i from the centralized one previously defined, such that it is composed by two main terms:
+	term 1: dependent only on states x_i and x_j: available at each time step t
+	term 2: neighbors controls dependent: need to estimate them, because if there are communication delays, agent I-th works in outdated information
+Time scale separation involves separating the rapid exchange of local information between nodes (fast dynamics) from the slower updates of the overall system state (slow dynamics).
+Algorithm for a generic time unit t:
+	initial estimates v_i(t,0) are computed for each agent
+	estimates are updated through \gamma intra-consensus iterations: for h=0...\gamma:
+		v_i(t,h) is propagated to the neighbors
+		v_i(t,h+1) is computed, using v_j(t,h)
+Algorithm produces v_i(t,\gamma) that is an estimation of u_i(t)
+
+
+
+### Slide 5.2: Distributed implementation - RESULTS
+
+Assuming in our discussion that there is only one reach (ie only one distinct maximal reachable set) => graph is strongly connected, as there is a directed path between any pair of nodes in the graph
+
+Theorem 3.2: 
+	By  defining vector estimation V= ..., where matrix G, dependent on D and A (degree and adjacency matrices) and representing the influence of neighboring states, is a Schur matrix, 
+	namely a non negative matrix with spectral radius r(G)<1 (spectral radius = the largest absolute value of its eigenvalues)
+	Radius(G)<1 = the norms of G^h decreases as h increases
+	if iterations -> inf: sum(G^h)=(I-G)^-1=> the overall influence of G is encapsulated in a single stable matrix, ensuring convergence
+ 	(I-G)^-1 does not alter the final control outcome: thus, the iterative process used in the distributed protocol will match the centralized control law with sufficient iterations.
+
+Lemma 3.2:
+	For gamma=0, the estimated control converge with the centralized control.
+
+Theorem 3.3:
+	by induction and properties of W and G, the rewritten dynamical matrix is non negative and row stochastic if k*g>=1 => ie has spectral radius =1 which guarantees convergence to a common consensus value
+	Thus for each choice of gamma>0, ig k*g>=1 the estimation will converge to centralized control law 
+
+
+
+### Slide 6: Simulations and Results
+
+There are conducted extensive simulations to validate our proposed protocol. 
+The results demonstrate significant performance improvements over standard protocols. 
+The new protocol achieves faster consensus with less information exchange, even in large networks. 
+These findings highlight the effectiveness and robustness of the approach in real-world applications.
+
+
+
+### Slide 7: Conclusion and Future Work
+
+In conclusion, this paper presents a robust distributed consensus protocol for discrete-time systems that overcomes the limitations of existing methods. 
+
+The work presented provides a foundation for the development of my master thesis, which look for a finite-time consensus in continuous time for multi-agent systems
+where each node uses PINNs to estimate its own Lyapunov function, based on state data of the agent, that satisfy stability constraints. 
+The primary purpose of estimating this Lyapunov function is to ensure the stability of the multi-agent system & to facilitate the consensus process by providing a strong stability guarantee for each agent's state.
+The proposed distributed consensus protocol, adapted for continuous time, will make the V(x)s converge in finite time => also the states will converge
+
+
+

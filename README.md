@@ -7,4 +7,4 @@ In ```/Implementation``` folder, there is the Python script for performing simul
 * New proposed centralized protocol, in which are compared the performances by varying the parameter g;
 * New proposed distributed protocol, stressing out the theoretical results of equivalence between centralized and distributed control law. 
 ## Reference
-[1] Cacace, Filippo, et al. "A new distributed protocol for consensus of discrete-time systems." __European Journal of Control, vol. 74__, 2023, p. 100833. Elsevier, https://doi.org/10.1016/j.ejcon.2023.100833.
+[1] Cacace, Filippo, et al. "A new distributed protocol for consensus of discrete-time systems." _European Journal of Control, vol. 74_, 2023, p. 100833. Elsevier, https://doi.org/10.1016/j.ejcon.2023.100833.

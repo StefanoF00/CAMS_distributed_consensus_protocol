@@ -48,7 +48,7 @@ Decentralized protocols:
 	Each node now has only local information from its neighbors (& possibly some additional information from previous time steps)
 	So all necessary information is not available in a single step
 	Nodes require more steps to communicate with others and exchange information
-	=> This communication is subject to delays due to the finite speed of information transfer.
+	Information transfer has a finite speed => Communication is subject to delays
 
 Common problem: Convergence rate cannot be fixed arbitrarily 
 
@@ -71,6 +71,9 @@ Recall Passivity: defined storage function S(x) = 0.5x(t)^2
 	lets compute increment delta_S=S(x(t+1))-S(x(t))
 	substitute x(t+1) = x(t) + u(t) in the increment
 	in the increment, express x in terms of the output and input: y = x+gu -> x=y-gu
+PASSIVITY MEANS: 
+	system does not produce additional internal energy
+	the max extractable energy is initial stored energy
 g=1/2: Loseless: the energy provided by the input exactly matches the change in stored energy, with no additional energy dissipation. The system does not generate or dissipate extra energy.
 g>1/2: input-strictly passive: agents dissipate a certain amount of energy, contributing to enhanced stability and robustness.
 
@@ -113,10 +116,26 @@ Theorem 3.3:
 
 ### Slide 6: Simulations and Results
 
-There are conducted extensive simulations to validate our proposed protocol. 
-The results demonstrate significant performance improvements over standard protocols. 
-The new protocol achieves faster consensus with less information exchange, even in large networks. 
-These findings highlight the effectiveness and robustness of the approach in real-world applications.
+I implemented the whole work in order to show simulations validating and highlighting in a clearer way the theoretical results.
+
+Initialized matrices A, D, L related to a strongly connected directed graph composed by 20 agents.
+As you can see, lambda1=0 has multiplicity=1 due to strong Connectivity condition, and fiedler eigenvalue lambda2>0.
+lambda_max = 3.8+0.12j imposes a bound for k in the presented standard protocol simulation, shown in fig 6
+
+In fact, theoretical max value for k that ensures stability is k = 1/|lambda_max|. 
+For the chosen network, convergence is met at 20 time steps.
+By using a k value slightly higher, the dynamics diverge drastically. 
+
+The centralized proposed protocol is now tested in order to stress out the dependence on k of the convergence for g=1.
+In fact with g=0.6 (more in general 0.5<=g<1), the dynamics has oscillations.
+With g>>1 the convergence is slower
+g=1 we have convergence in 2 steps
+
+Finally, distributed protocol simulations were performed for highlighting the convergence with any kind of gamma.
+gamma=0 and 1: slow convergence
+gamma=1000: as gamma approaches infinity, the convergence time in distributed systems is equal to the one of centralized.
+
+I also verified that the performance improvements of the proposed control laws are more evident on larger networks. 
 
 
 
